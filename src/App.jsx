@@ -1,14 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { MapContainer, TileLayer, useMapEvents, Marker, Popup } from 'react-leaflet';
-// Note: In some environments (like Canvas/Code sandbox), direct import of CSS may cause resolution errors.
-// This is typically handled outside the JSX file, but we keep it for standard project structure.
-// If you see errors about this file, remove this line and add the link in index.html instead.
 import 'leaflet/dist/leaflet.css';
 import './App.css'; 
-
-// Fix for Leaflet marker icons in React/Vite environments
 import L from 'leaflet';
-// Fix: The original code used invalid assignment syntax. This correctly deletes the default icon method.
+
 delete L.Icon.Default.prototype._getIconUrl; 
 L.Icon.Default.mergeOptions({
     iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -16,7 +11,6 @@ L.Icon.Default.mergeOptions({
     shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-// Component to handle map clicks
 const LocationMarkerHandler = ({ onMapClick, isAdding }) => {
     useMapEvents({
         click: (e) => {
@@ -33,38 +27,29 @@ const LocationMarkerHandler = ({ onMapClick, isAdding }) => {
 };
 
 const App = () => {
-    // Stores the list of all saved locations
     const [locations, setLocations] = useState([]);
-    // Controls the app state: true allows adding locations, false locks the view
     const [isAdding, setIsAdding] = useState(true);
-    // Holds coordinates temporarily after a map click
     const [tempLocation, setTempLocation] = useState(null);
-    // State for the user input form
     const [locationInfo, setLocationInfo] = useState({ name: '', details: '' });
 
     const formRef = useRef(null);
 
-    // Handles a map click event, setting the temporary location
     const handleMapClick = useCallback((latlng) => {
         if (isAdding) {
             setTempLocation(latlng);
-            // Scrolls to the form for user focus
             setTimeout(() => {
                 formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 100);
         }
     }, [isAdding]);
 
-    // Updates form input state
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setLocationInfo(prev => ({ ...prev, [name]: value }));
     };
 
-    // Saves the temporary location as a permanent entry
     const handleSaveLocation = (e) => {
         e.preventDefault();
-
         if (tempLocation && locationInfo.name.trim()) {
             const newLocation = {
                 id: Date.now(),
@@ -73,20 +58,17 @@ const App = () => {
                 name: locationInfo.name.trim(),
                 details: locationInfo.details.trim() || 'No details provided.',
             };
-
             setLocations(prev => [...prev, newLocation]);
             setTempLocation(null);
             setLocationInfo({ name: '', details: '' });
         }
     };
 
-    // Switches the application to viewing mode
     const handleDone = () => {
         setIsAdding(false);
         setTempLocation(null);
     };
 
-    // Clears all data and resets to the initial adding mode
     const handleReset = () => {
         setIsAdding(true);
         setLocations([]);
@@ -94,7 +76,27 @@ const App = () => {
         setLocationInfo({ name: '', details: '' });
     };
 
-    // Component to render the list of entered locations
+    const handleEdit = (index) => {
+        const updatedName = prompt("Enter new name:", locations[index].name);
+        const updatedDetails = prompt("Enter new details:", locations[index].details);
+        if (updatedName !== null && updatedDetails !== null) {
+            const updatedLocations = [...locations];
+            updatedLocations[index] = {
+                ...updatedLocations[index],
+                name: updatedName,
+                details: updatedDetails,
+            };
+            setLocations(updatedLocations);
+        }
+    };
+
+    const handleDelete = (index) => {
+        if (window.confirm("Are you sure you want to delete this location?")) {
+            const updatedLocations = locations.filter((_, i) => i !== index);
+            setLocations(updatedLocations);
+        }
+    };
+
     const LocationsList = () => (
         <div className="locations-list">
             <h2>Entered Locations ({locations.length})</h2>
@@ -102,10 +104,14 @@ const App = () => {
                 <p>Click on the map to start adding places!</p>
             ) : (
                 <ul>
-                    {locations.map(loc => (
+                    {locations.map((loc, index) => (
                         <li key={loc.id}>
                             <strong>{loc.name}</strong>
                             <p className="details">{loc.details.substring(0, 50)}...</p>
+                            <div style={{ marginTop: '6px' }}>
+                                <button onClick={() => handleEdit(index)} style={{ marginRight: '6px', padding: '4px 8px', fontSize: '0.8rem' }}>Edit</button>
+                                <button onClick={() => handleDelete(index)} style={{ padding: '4px 8px', fontSize: '0.8rem' }}>Delete</button>
+                            </div>
                         </li>
                     ))}
                 </ul>
@@ -113,7 +119,6 @@ const App = () => {
         </div>
     );
 
-    // Component to render the location input form
     const LocationInputForm = () => (
         <div ref={formRef} className="location-form-container">
             <h3>Add Location Details</h3>
@@ -206,7 +211,6 @@ const App = () => {
                 </div>
 
                 <div className="sidebar">
-                    {/* Conditional rendering for the input form and list */}
                     {isAdding && tempLocation && <LocationInputForm />}
                     {isAdding && !tempLocation && <LocationsList />}
                     {!isAdding && <LocationsList />}
