@@ -1,0 +1,219 @@
+/* App.css — Clean full-screen map layout */
+
+/* Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: 'Inter', 'Segoe UI', Tahoma, sans-serif;
+  background-color: #f9fafb;
+  color: #333;
+}
+
+/* Header */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background-color: #1e293b;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+  z-index: 1000;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+header h1 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+}
+
+.controls button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+.controls button:hover {
+  background-color: #2563eb;
+}
+
+/* App container */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  padding-top: 70px; /* account for fixed header */
+}
+
+/* Content area */
+.content-area {
+  flex: 1;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+/* Map */
+.map-wrapper {
+  flex: 7;
+  height: 100%;
+  background-color: #e5e7eb;
+}
+
+.leaflet-map {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Sidebar */
+.sidebar {
+  flex: 3;
+  background-color: #f1f5f9;
+  border-left: 1px solid #d1d5db;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+/* Location form */
+.location-form-container {
+  background: white;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  margin-bottom: 20px;
+}
+
+.location-form input,
+.location-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  outline: none;
+}
+.location-form input:focus,
+.location-form textarea:focus {
+  border-color: #3b82f6;
+}
+
+.button-save,
+.button-cancel {
+  width: 48%;
+  border: none;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.button-save {
+  background-color: #f59e0b;
+  color: white;
+}
+.button-save:hover {
+  background-color: #d97706;
+}
+
+.button-cancel {
+  background-color: #9ca3af;
+  color: white;
+}
+.button-cancel:hover {
+  background-color: #6b7280;
+}
+
+/* Locations list */
+.locations-list {
+  flex: 1;
+}
+
+.locations-list h2 {
+  font-size: 1.1rem;
+  color: #1e293b;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 6px;
+}
+
+.locations-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.locations-list li {
+  background-color: white;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  margin-bottom: 12px;
+}
+
+.locations-list li strong {
+  font-weight: 600;
+  color: #334155;
+}
+
+.locations-list li .details {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin-top: 4px;
+}
+
+/* Popup */
+.popup-content h4 {
+  margin: 0 0 4px;
+  color: #1e293b;
+  font-weight: 600;
+}
+.popup-content p {
+  margin: 0;
+  color: #475569;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .content-area {
+    flex-direction: column;
+  }
+  .sidebar {
+    border-left: none;
+    border-top: 1px solid #d1d5db;
+    width: 100%;
+    height: auto;
+  }
+  .map-wrapper {
+    flex: none;
+    height: 50vh;
+  }
+}
